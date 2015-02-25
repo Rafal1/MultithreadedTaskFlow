@@ -17,7 +17,7 @@ public class FirstQueue {
         if (realQueue == null) {
             synchronized (FirstQueue.class) {
                 if (realQueue == null) {
-                    realQueue = new LinkedBlockingQueue<Task>(size);
+                    realQueue = new LinkedBlockingQueue<>(size);
                     maxSizeOfQueue = size;
                     isInitialized = true;
                 }
@@ -26,11 +26,9 @@ public class FirstQueue {
         return realQueue;
     }
 
-    public LinkedBlockingQueue<Task> getInstance() {
-        return realQueue;
-    }
+    //todo add delete
 
-    public static Boolean isHalfFull() {
+    private static Boolean isHalfFull() {
         if (isInitialized) {
             Integer remCapacity = new Integer(realQueue.remainingCapacity());
             Float EmptyPercentage = remCapacity.floatValue() / maxSizeOfQueue.floatValue();
@@ -43,4 +41,5 @@ public class FirstQueue {
         }
         return false;
     }
+
 }
