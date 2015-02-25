@@ -22,8 +22,6 @@ public class Main {
         } else {
             System.out.println("Error, the number of arguments is wrong!");
         }
-
-
     }
 
     private static Integer validateQueueLength(String ql) {
