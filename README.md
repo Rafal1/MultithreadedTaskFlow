@@ -1,5 +1,6 @@
 # MultithreadedTaskFlow
 recruitment task - 1
+
 Zadanie nr 1
 
 Zbuduj aplikację, która będzie składać się z dwóch umownych komponentów:
