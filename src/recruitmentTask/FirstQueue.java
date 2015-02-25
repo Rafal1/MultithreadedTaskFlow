@@ -1,19 +1,21 @@
+package recruitmenttask;
+
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author Rafał Zawadzki
  */
-public class FirstQueueSingleton {
+public class FirstQueue {
     private static volatile LinkedBlockingQueue<Task> realQueue = null;
     private static volatile Boolean isInitialized = false;
     private static volatile Integer maxSizeOfQueue;
 
-    private FirstQueueSingleton() {
+    private FirstQueue() {
     }
 
     public static LinkedBlockingQueue createInstance(Integer size) {
         if (realQueue == null) {
-            synchronized (FirstQueueSingleton.class) {
+            synchronized (FirstQueue.class) {
                 if (realQueue == null) {
                     realQueue = new LinkedBlockingQueue<Task>(size);
                     maxSizeOfQueue = size;
@@ -28,7 +30,7 @@ public class FirstQueueSingleton {
         return realQueue;
     }
 
-    public Boolean isHalfFull() {
+    public static Boolean isHalfFull() {
         if (isInitialized) {
             Integer remCapacity = new Integer(realQueue.remainingCapacity());
             Float EmptyPercentage = remCapacity.floatValue() / maxSizeOfQueue.floatValue();
@@ -36,7 +38,7 @@ public class FirstQueueSingleton {
                 return true;
             }
         } else {
-            System.out.println("FirstQueue hasn't been initilized yet.");
+            System.out.println("recruitmenttask.FirstQueue hasn't been initilized yet.");
             return null;
         }
         return false;
