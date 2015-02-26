@@ -4,7 +4,6 @@ import recruitmenttask.PropertiesEnum;
 import recruitmenttask.Task;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -18,8 +17,7 @@ public class TaskProducer {
 
     private Task generateTask() {
         String rdString = generateRandomTasksString();
-        Task newRandomTask = new Task(rdString);
-        return newRandomTask;
+        return new Task(rdString);
     }
 
     private String generateRandomTasksString() {
@@ -46,7 +44,7 @@ public class TaskProducer {
                 outputTasksString[maxQueueSize - 1] = subAlphabetNumbers.charAt(nr.nextInt());
             }
         }
-//        outputTasksString = removeDoubleSpecialChars(outputTasksString);
+        outputTasksString = removeDoubleSpecialChars(outputTasksString, subAlphabetSigns, subAlphabetNumbers);
         return outputTasksString.toString();
     }
 
@@ -65,14 +63,12 @@ public class TaskProducer {
             prop.load(input);
             String tmpMax = prop.getProperty(PropertiesEnum.MAX_LENGTH_OF_TASKS_STRING.toString());
             maxQueueSize = Integer.parseInt(tmpMax);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
                 input.close();
-            } catch (IOException e) {
+            } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
             }
         }
@@ -81,11 +77,12 @@ public class TaskProducer {
 
     private char[] removeDoubleSpecialChars(char[] randomString, String subAlphabetSigns, String subAlphabetNumbers) {
         Boolean isSpecialBefore = false;
+        Random nr = new Random(subAlphabetNumbers.length());
         for (int i = 0; i < randomString.length; i++) {
             for (int j = 0; j < subAlphabetSigns.length(); j++) {
                 if (randomString[i] == subAlphabetSigns.charAt(j)) {
                     if (isSpecialBefore) {
-//                        randomString[i] = subAlphabetNumbers.charAt(nr.nextInt());
+                        randomString[i] = subAlphabetNumbers.charAt(nr.nextInt());
                         isSpecialBefore = false;
                         break;
                     } else {
@@ -97,4 +94,5 @@ public class TaskProducer {
         }
         return randomString;
     }
+
 }
