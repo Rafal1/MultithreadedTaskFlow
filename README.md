@@ -1,5 +1,5 @@
 # MultithreadedTaskFlow
-recruitment task - 1
+
 
 Zadanie nr 1
 
