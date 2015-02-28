@@ -1,6 +1,9 @@
 package recruitmenttask.taskconsumer;
 
 import junit.framework.TestCase;
+import recruitmenttask.FirstQueue;
+import recruitmenttask.SingletonCoverQueue;
+import recruitmenttask.Task;
 
 public class TaskConsumerTest extends TestCase {
 
@@ -8,6 +11,9 @@ public class TaskConsumerTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
     }
+
+    // 1 TEST WITH QUEUE
+    // 2 TEST WITHOUT QUEUE
 
     /*
 
@@ -25,6 +31,11 @@ public class TaskConsumerTest extends TestCase {
         inject there an example queue!
         */
     public void testComputeResult() throws Exception {
+//        FirstQueue.initQueue(10);
+//        SingletonCoverQueue<Task> q = FirstQueue.getInstance();
+//        TaskConsumer tc = new TaskConsumer();
+//        tc.consumeTask(q);
+
 //        TaskConsumer tc = new TaskConsumer();
 //        Double re = tc.computeResult();
 //        assertEquals("Results are not equal", 15.0, re);
