@@ -32,9 +32,11 @@ public class Main {
                 initializeQueue(tmpArgOne);
             }
         } else {
-            System.out.println("You didn't give any argument. Default queue length is 100.");
+            System.out.println("You didn't give any argument.");
+            System.out.println("In addition, If you hadn't specified the queue length value in the config file. The default would be 100.");
+            Integer queueN = Integer.parseInt(prop.getProperty(PropertiesEnum.MAX_QUEUE_LENGTH.name()));
+            initializeQueue(queueN);
         }
-
         try {
             output = new FileOutputStream(configFileName);
             prop.store(output, null);
