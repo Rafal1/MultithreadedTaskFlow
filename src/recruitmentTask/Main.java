@@ -32,7 +32,7 @@ public class Main {
                 initializeQueue(tmpArgOne);
             }
         } else {
-            System.out.println("Error, the number of arguments is wrong!");
+            System.out.println("You didn't give any argument. Default queue length is 100.");
         }
 
         try {
