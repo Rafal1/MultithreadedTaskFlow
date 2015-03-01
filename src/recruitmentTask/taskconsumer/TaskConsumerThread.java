@@ -15,10 +15,10 @@ public class TaskConsumerThread implements Runnable {
         while (true) {
             t = tConsumer.consumeTask();
 
-            //if queue is empty
+            //if queue is empty or sth went wrong
             if (t == null) {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(2500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

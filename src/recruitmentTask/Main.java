@@ -1,5 +1,8 @@
 package recruitmenttask;
 
+import recruitmenttask.taskconsumer.TaskConsumerThread;
+import recruitmenttask.taskproducer.TaskProducerThread;
+
 import java.io.*;
 import java.util.Properties;
 
@@ -7,19 +10,17 @@ import java.util.Properties;
  * @author Rafał Zawadzki
  */
 public class Main {
-
-    /*
-    Data from the recruitment task:
-    the number of taskProducers - 2
-    the number of taskConcumers - 4
-     */
+    private static String configFileName = "config.properties";
 
     public static void main(String[] args) {
         initilizeProperties();
+
         Properties prop = new Properties();
-        OutputStream output = null;
+        OutputStream output;
+        InputStream input = null;
         try {
-            output = new FileOutputStream("config.properties");
+            input = new FileInputStream(configFileName);
+            prop.load(input);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -35,12 +36,37 @@ public class Main {
         }
 
         try {
+            output = new FileOutputStream(configFileName);
             prop.store(output, null);
             output.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        Integer producersN = Integer.parseInt(prop.getProperty(PropertiesEnum.NUMBER_OF_TASK_PRODUCERS.name()));
+        Integer consumersN = Integer.parseInt(prop.getProperty(PropertiesEnum.NUMBER_OF_TASK_CONSUMERS.name()));
+
+        for (int i = 0; i < producersN; i++) {
+            Thread tp = new Thread(new TaskProducerThread());
+            tp.start();
+        }
+
+        // wait until the queue becomes full (it's a task requirement)
+        while (true) {
+            if (FirstQueue.getInstance().isFull()) {
+                for (int i = 0; i < consumersN; i++) {
+                    Thread tc = new Thread(new TaskConsumerThread());
+                    tc.start();
+                }
+                break;
+            }
+        }
+
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static Integer validateQueueLength(String ql) {
@@ -57,7 +83,7 @@ public class Main {
     }
 
     private static void initializeQueue(Integer size) {
-        FirstQueue.createInstance(size);
+        FirstQueue.initQueue(size);
     }
 
     private static void initilizeProperties() {
@@ -73,8 +99,8 @@ public class Main {
             // set the properties value
             Integer numberOfTaskProducers = 2;
             Integer numberOfTaskConsumers = 4;
-            Integer maxQueueLength = 1000;
-            Integer maxLengthOfTasksString = 1000;
+            Integer maxQueueLength = 100;
+            Integer maxLengthOfTasksString = 100;
 
             prop.setProperty(PropertiesEnum.NUMBER_OF_TASK_PRODUCERS.name(), numberOfTaskProducers.toString());
             prop.setProperty(PropertiesEnum.NUMBER_OF_TASK_CONSUMERS.name(), numberOfTaskConsumers.toString());

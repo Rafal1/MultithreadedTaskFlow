@@ -5,39 +5,103 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * @author Rafał Zawadzki
  */
-public class FirstQueue {
-    private static volatile LinkedBlockingQueue<Task> realQueue = null;
-    private static volatile Boolean isInitialized = false;
-    private static volatile Integer maxSizeOfQueue;
+public class FirstQueue implements SingletonCoverQueue<Task> {
+    private static FirstQueue firstQueueInstance;
+    private static LinkedBlockingQueue<Task> realQueue = null;
+    private static Boolean isInitialized = false;
+    private static Integer maxSizeOfQueue;
+    private Integer calculatedHalfCapacity = null;
+    private Boolean isFilled = false;
+    private static String wrongInitializeInfo = "FirstQueue hasn't been initilized yet.";
 
     private FirstQueue() {
     }
 
-    public static LinkedBlockingQueue createInstance(Integer size) {
+    public static void initQueue(Integer size) {
         if (realQueue == null) {
             synchronized (FirstQueue.class) {
                 if (realQueue == null) {
                     realQueue = new LinkedBlockingQueue<>(size);
                     maxSizeOfQueue = size;
+                    firstQueueInstance = new FirstQueue();
                     isInitialized = true;
                 }
             }
         }
-        return realQueue;
     }
 
-    //todo add delete
+    public synchronized static FirstQueue getInstance() {
+        return firstQueueInstance;
+    }
 
-    private static Boolean isHalfFull() {
-        if (isInitialized) {
-            Integer remCapacity = new Integer(realQueue.remainingCapacity());
-            Float EmptyPercentage = remCapacity.floatValue() / maxSizeOfQueue.floatValue();
-            if (EmptyPercentage < 0.5) {
-                return true;
+    public Task offer(Task t) {
+        synchronized (this) {
+            if (!checkInitialization()) {
+                return null;
             }
-        } else {
-            System.out.println("recruitmenttask.FirstQueue hasn't been initilized yet.");
+            if (isFilled) {
+                return null;
+            }
+            if (realQueue.offer(t)) {
+                System.out.println("OFFER PRODUCER NAME: " + Thread.currentThread().getName());
+                if (realQueue.remainingCapacity() == 0) { //after the last successful operation
+                    isFilled = true;
+                }
+                return t;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public synchronized Task poll() {
+        synchronized (this) {
+            if (!checkInitialization()) {
+                return null;
+            }
+            Task t = realQueue.poll();
+            if (isHalfFull()) {
+                isFilled = false;
+            }
+            if (t != null) {
+                System.out.println("POLL CONSUMER NAME: " + Thread.currentThread().getName());
+                return t;
+            }
+            System.out.println("IS EMPTY");
             return null;
+        }
+    }
+
+    private Boolean isHalfFull() {
+        if (!checkInitialization()) {
+            return null;
+        }
+        if (calculatedHalfCapacity == null) {
+            Double halfCapacity = maxSizeOfQueue.doubleValue() / 2.0;
+            halfCapacity = Math.ceil(halfCapacity); // if queue has an odd number as length
+            calculatedHalfCapacity = halfCapacity.intValue();
+        }
+        Integer remCapacity = new Integer(realQueue.remainingCapacity());
+        Integer elementsInQueue = maxSizeOfQueue - remCapacity;
+        if (calculatedHalfCapacity.equals(elementsInQueue)) {
+            System.out.println("IS HALF FULL");
+            return true;
+        }
+        return false;
+    }
+
+    private Boolean checkInitialization() {
+        if (isInitialized) {
+            return true;
+        } else {
+            System.out.println(wrongInitializeInfo);
+            return false;
+        }
+    }
+
+    public Boolean isFull() {
+        if (realQueue.remainingCapacity() == 0) {
+            return true;
         }
         return false;
     }
