@@ -43,7 +43,6 @@ public class FirstQueue implements SingletonCoverQueue<Task> {
                 return null;
             }
             if (realQueue.offer(t)) {
-                System.out.println("OFFER PRODUCER NAME: " + Thread.currentThread().getName());
                 if (realQueue.remainingCapacity() == 0) { //after the last successful operation
                     isFilled = true;
                 }
@@ -64,10 +63,8 @@ public class FirstQueue implements SingletonCoverQueue<Task> {
                 isFilled = false;
             }
             if (t != null) {
-                System.out.println("POLL CONSUMER NAME: " + Thread.currentThread().getName());
                 return t;
             }
-            System.out.println("IS EMPTY");
             return null;
         }
     }
@@ -84,7 +81,6 @@ public class FirstQueue implements SingletonCoverQueue<Task> {
         Integer remCapacity = new Integer(realQueue.remainingCapacity());
         Integer elementsInQueue = maxSizeOfQueue - remCapacity;
         if (calculatedHalfCapacity.equals(elementsInQueue)) {
-            System.out.println("IS HALF FULL");
             return true;
         }
         return false;
