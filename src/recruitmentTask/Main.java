@@ -68,7 +68,7 @@ public class Main {
 
             Long currentTime = System.currentTimeMillis();
             Long spendTime = currentTime - startTime;
-            if(spendTime >= timeLimit) {
+            if (spendTime >= timeLimit) {
                 System.out.println("Time limit for filling queue has been reached.");
                 break;
             }
@@ -76,7 +76,7 @@ public class Main {
 
         try {
             input.close();
-        } catch (IOException e) {
+        } catch (IOException|NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -113,7 +113,7 @@ public class Main {
             Integer numberOfTaskConsumers = 4;
             Integer maxQueueLength = 100;
             Integer maxLengthOfTasksString = 100;
-            Long fillingQueueTimeLimit = new Long(1000 * 60 * 1); //mnutes in miliseconds
+            Long fillingQueueTimeLimit = Long.valueOf(1000 * 60 * 1); //mnutes in miliseconds
 
             prop.setProperty(PropertiesEnum.NUMBER_OF_TASK_PRODUCERS.name(), numberOfTaskProducers.toString());
             prop.setProperty(PropertiesEnum.NUMBER_OF_TASK_CONSUMERS.name(), numberOfTaskConsumers.toString());
